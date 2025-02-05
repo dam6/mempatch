@@ -42,6 +42,7 @@ void read_and_print_memory(DWORD pid, uintptr_t start_addr, size_t mem_size) {
         // Skip unreadable or protected memory pages
         if (memoryInfo.State != MEM_COMMIT || memoryInfo.Protect == PAGE_NOACCESS || memoryInfo.Protect == PAGE_EXECUTE) {
             current_addr += memoryInfo.RegionSize;
+            bytes_remaining -= memoryInfo.RegionSize;
             continue;
         }
 
@@ -55,6 +56,7 @@ void read_and_print_memory(DWORD pid, uintptr_t start_addr, size_t mem_size) {
         // If no bytes were read, move to the next region
         if (bytes_read == 0) {
             current_addr += memoryInfo.RegionSize;
+            bytes_remaining -= memoryInfo.RegionSize;
             continue;    
         }
 
