@@ -59,6 +59,7 @@ void search_string_in_memory(DWORD pid, uintptr_t start_addr, size_t mem_size, c
         // Skip unreadable or protected memory pages
         if (memoryInfo.State != MEM_COMMIT || memoryInfo.Protect == PAGE_NOACCESS || memoryInfo.Protect == PAGE_EXECUTE) {
             current_addr += memoryInfo.RegionSize;
+            bytes_remaining -= memoryInfo.RegionSize;
             continue;
         }
 
@@ -72,6 +73,7 @@ void search_string_in_memory(DWORD pid, uintptr_t start_addr, size_t mem_size, c
         // If no bytes were read, move to the next region
         if (bytes_read == 0) {
             current_addr += memoryInfo.RegionSize;
+            bytes_remaining -= memoryInfo.RegionSize;
             continue;    
         }
 
@@ -80,6 +82,7 @@ void search_string_in_memory(DWORD pid, uintptr_t start_addr, size_t mem_size, c
         if (found) {
             uintptr_t found_addr = current_addr + (found - buffer);
             printf("0x%llx\n", (unsigned long long)found_addr);
+            found = memmem(found + 1, bytes_to_read - (found - buffer) - 1, search_str, strlen(search_str));
         }
 
         bytes_remaining -= bytes_to_read;
