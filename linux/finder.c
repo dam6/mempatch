@@ -51,6 +51,7 @@ void search_string_in_memory(pid_t pid, unsigned long start_addr, size_t mem_siz
         if (found) {
             unsigned long found_addr = current_addr + (found - buffer);
             printf("0x%lx\n", found_addr);
+            found = memmem(found + 1, bytes_to_read - (found - buffer) - 1, search_str, strlen(search_str));
         }
 
         bytes_remaining -= bytes_to_read;
